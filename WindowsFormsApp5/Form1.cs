@@ -32,15 +32,14 @@ namespace WindowsFormsApp5
 
             MySqlConnection conexion;
             MySqlCommand comando;
-            try
-            {
-
-                conexion = new MySqlConnection(
+            conexion = new MySqlConnection(
                    "server=127.0.0.1;" +
                    "userid=root;" +
-                   "password=negritoBD123;" +
+                   "password=;" +
                    "database=personita"
                 );
+            try
+            {              
                 conexion.Open();
 
                 comando = new MySqlCommand();
@@ -56,13 +55,56 @@ namespace WindowsFormsApp5
                 comando.ExecuteNonQuery();
                 MessageBox.Show("Insertado");
             }
-            catch(MySqlException ex)
+            catch
             {
-                // Hacer la magia aca!!!
+                if (String.IsNullOrEmpty(TextBoxCedula.Text))
+                {
+                    MessageBox.Show("No puede dejar ningun campo vacio ");
+                }
+                if (String.IsNullOrEmpty(TextBoxNombre.Text))
+                {
+                    MessageBox.Show("No puede dejar ningun campo vacio ");
+                }
+                if (String.IsNullOrEmpty(TextBoxApellido.Text))
+                {
+                    MessageBox.Show("No puded dejar ningun campi vacio ");
+                }
+                if (String.IsNullOrEmpty(TextBoxTelefono.Text))
+                {
+                    MessageBox.Show("No puede dejar ningun campo vacio ");
+                }
+                if (String.IsNullOrEmpty(TextBoxEmail.Text))
+                {
+                    MessageBox.Show("No puede dejar ningun campo vacio ");
+                }             
+            }
+           
+            try
+            {
+                comando = new MySqlCommand();
+
+                string query = "SELECT COUNT(cedula) FROM persona WHERE cedula = @cedula";
+
+                comando.Connection = conexion;
+                comando.CommandText = query;
+
+                comando.Parameters.AddWithValue("@cedula", cedula);
+
+                MySqlDataReader lector = comando.ExecuteReader();
+                if (lector.Read()) MessageBox.Show("La cedula que intenta ingresar ya existe " + "ERROR: " );
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Hubo un error");
+                Console.Write("Hubo un error" + ex);
+            }
+            catch
+            {
+                int n;
+                bool EsEntero = Int32.TryParse(TextBoxCedula.Text, out n);
+                if (!EsEntero)
+                {
+                    MessageBox.Show("Debe ingresar los 8 numeros de su cedula sin el digito separador");
+                }
             }
 
         }
